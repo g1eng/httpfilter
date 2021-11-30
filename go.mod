@@ -1,4 +1,4 @@
-module httpfilter
+module github.com/g1eng/httpfilter
 
 go 1.17
 
