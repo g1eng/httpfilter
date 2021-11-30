@@ -1,4 +1,4 @@
-package core
+package filter
 
 // SetDebug permissively turn on debug flag
 func (f *HttpFilter) SetDebug() {

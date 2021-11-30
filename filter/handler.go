@@ -1,4 +1,4 @@
-package core
+package filter
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -14,6 +14,7 @@ func (f *HttpFilter) corsRequestHandler(w http.ResponseWriter, _ *http.Request, 
 	w.WriteHeader(http.StatusOK)
 }
 
+// NullHandler is dummy handler to do nothing
 func NullHandler(_ http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	return
 }

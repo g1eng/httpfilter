@@ -1,4 +1,4 @@
-package core
+package filter
 
 import (
 	. "gopkg.in/check.v1"

@@ -1,7 +1,6 @@
-package local_session
+package local
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/g1eng/httpfilter/session/responder"
@@ -56,7 +55,7 @@ func (sess TokenStore) RevokeClient(r *http.Request) error {
 // value with the secret registered in userSessions.
 // If the matched result is success, it provides protected route for the client.
 //
-//[Note] customHeader is used for authentication.
+//[Note] customHeader is used for the authentication.
 func (sess TokenStore) Auth(h httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		key := calcSessionKey(r)
@@ -76,34 +75,13 @@ func (sess TokenStore) Auth(h httprouter.Handle) httprouter.Handle {
 	}
 }
 
+// GetAccessToken returns preset access token.
 func (sess *TokenStore) GetAccessToken() string {
 	return sess.accessToken
 }
 
+// RegenerateToken recreates access token with CalcBs32 and returns it.
 func (sess *TokenStore) RegenerateToken() string {
 	sess.accessToken = CalcBs32()
 	return sess.accessToken
-}
-
-func (sess *TokenStore) ValidateToken(handle httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		var c SimpleMFACredential
-		if r.ContentLength > 1024 {
-			responder.Write403(w)
-			return
-		}
-		decoder := json.NewDecoder(r.Body)
-		if err := decoder.Decode(&c); err != nil {
-			sess.Log(fmt.Sprintf("%v %v %v %v %d // json decode failure", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusForbidden))
-			responder.Write403(w)
-		} else if c.OTPSecret == "" {
-			sess.Log(fmt.Sprintf("%v %v %v %v %d // blank access token", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusForbidden))
-			responder.Write403(w)
-		} else if c.OTPSecret != sess.accessToken {
-			sess.Log(fmt.Sprintf("%v %v %v %v %d // invalid access token", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusForbidden))
-			responder.Write403(w)
-		} else {
-			handle(w, r, ps)
-		}
-	}
 }

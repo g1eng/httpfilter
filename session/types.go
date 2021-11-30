@@ -1,4 +1,4 @@
-package provider
+package session
 
 import (
 	"github.com/julienschmidt/httprouter"

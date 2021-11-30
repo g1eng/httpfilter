@@ -1,4 +1,4 @@
-package local_session
+package local
 
 import (
 	"crypto/x509"

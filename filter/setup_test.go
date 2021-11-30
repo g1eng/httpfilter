@@ -1,4 +1,4 @@
-package core
+package filter
 
 import (
 	"github.com/julienschmidt/httprouter"
