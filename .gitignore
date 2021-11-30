@@ -1,0 +1,6 @@
+.idea
+/ui/node_modules
+/ui/dist
+/w3fs
+/w3fsd
+/w3fs-server
