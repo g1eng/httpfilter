@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/g1eng/w3fs/middleware/filter/session/responder"
+	"github.com/g1eng/httpfilter/session/responder"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"

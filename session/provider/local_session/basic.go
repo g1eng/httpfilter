@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/g1eng/w3fs/middleware/filter/session/responder"
+	"github.com/g1eng/httpfilter/session/responder"
 	"github.com/julienschmidt/httprouter"
 	"io"
 	"log"
@@ -89,7 +89,7 @@ func (sess *BasicStore) Auth(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		authHeader := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 		if len(authHeader) != 2 || strings.ToLower(authHeader[0]) != "basic" {
-			w.Header().Set("WWW-Authenticate", `Basic realm="W3FS basic authentication"`)
+			w.Header().Set("WWW-Authenticate", `Basic realm="basic authentication"`)
 			responder.Write400(w)
 			return
 		}

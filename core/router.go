@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/g1eng/w3fs/middleware/filter/wrapper"
+	"github.com/g1eng/httpfilter/wrapper"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
