@@ -4,7 +4,10 @@ A set of conditional access control wrappers for golang web application based on
 
 ### Status
 
-Unstable
+[![CircleCI](https://circleci.com/gh/g1eng/httpfilter/tree/master.svg?style=svg)](https://circleci.com/gh/g1eng/httpfilter/tree/master)
+[![codecov](https://codecov.io/gh/g1eng/httpfilter/branch/master/graph/badge.svg?token=EJZIHPRGNI)](https://codecov.io/gh/g1eng/httpfilter)
+
+(Unstable)
 
 ## Features
 
