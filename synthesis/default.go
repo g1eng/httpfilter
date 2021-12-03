@@ -1,4 +1,4 @@
-package wrapper
+package synthesis
 
 import (
 	"github.com/g1eng/httpfilter/session/responder"

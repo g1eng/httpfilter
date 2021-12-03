@@ -102,7 +102,7 @@ func (sess *BasicStore) Auth(handle httprouter.Handle) httprouter.Handle {
 		}
 		payload, err := base64.StdEncoding.DecodeString(authHeader[1])
 		if err != nil {
-			responder.Write403(w)
+			responder.Write401(w)
 			return
 		}
 
@@ -120,7 +120,7 @@ func (sess *BasicStore) Auth(handle httprouter.Handle) httprouter.Handle {
 				return
 			}
 		}
-		responder.Write403(w)
+		responder.Write401(w)
 		return
 	}
 }

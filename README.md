@@ -19,7 +19,8 @@ A set of conditional access control wrappers for golang web application based on
 
 Other extending and developing fractions in this package are:
 
-* builtin IP filtering and basic authentication support
+* builtin IP filtering and basic authentication support <- doing
+* wrappers for http.HandlerFunc  <- doing
 * ~~passing any authentication backend for an authorization~~ (that's enough to give httprouter.Handle for user-defined AuthWrapper. `AuthAnd` makes multi-factor authentication easier.)
 * redis backend
 

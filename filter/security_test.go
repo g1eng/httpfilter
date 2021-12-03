@@ -29,4 +29,5 @@ func (s *filterTestSuite) TestCorsRequestHandler(c *C) {
 	c.Check(w.Code, Equals, 200)
 	c.Check(w.Header().Get("X-Content-Type-Options"), Equals, "no-sniff")
 	c.Check(w.Header().Get("Access-Control-Allow-Origin"), Not(Equals), "")
+	c.Check(w.Header().Get("Access-Control-Allow-Origin"), Equals, s.f.origin)
 }

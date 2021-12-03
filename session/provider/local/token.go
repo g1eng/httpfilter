@@ -61,13 +61,13 @@ func (sess TokenStore) Auth(h httprouter.Handle) httprouter.Handle {
 		key := calcSessionKey(r)
 		val := sess.userSessions[key]
 		if val == "" {
-			responder.Write403(w)
+			responder.Write401(w)
 		} else if r.Header.Get(sess.customHeader) == "" {
 			sess.Log(fmt.Sprintf("%v %v %v %v %d // blank token", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusUnauthorized))
-			responder.Write403(w)
+			responder.Write401(w)
 		} else if r.Header.Get(sess.customHeader) != val {
 			sess.Log(fmt.Sprintf("%v %v %v %v %d // invalid token", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusUnauthorized))
-			responder.Write403(w)
+			responder.Write401(w)
 		} else {
 			sess.Log(fmt.Sprintf("%v %v %v %v %d // -", r.Method, r.RemoteAddr, r.Referer(), r.UserAgent(), http.StatusOK))
 			h(w, r, ps)

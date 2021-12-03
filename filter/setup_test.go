@@ -12,13 +12,8 @@ func init() {
 }
 
 type filterTestSuite struct {
-	f      HttpFilter
-	dummy  HttpFilter
-	result routeResult
-}
-type routeResult struct {
-	writer  http.ResponseWriter
-	request *http.Request
+	f     HttpFilter
+	dummy HttpFilter
 }
 
 func Test(t *testing.T) { TestingT(t) }
@@ -26,7 +21,6 @@ func Test(t *testing.T) { TestingT(t) }
 func (s *filterTestSuite) SetUpTest(_ *C) {
 	s.f = *NewFilter()
 	s.dummy = *NewFilter()
-	s.result = routeResult{}
 }
 
 func noAuth(handle httprouter.Handle) httprouter.Handle {
