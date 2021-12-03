@@ -29,3 +29,10 @@ func (s *filterTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, 
 	_, _ = r.Body.Read(a)
 	_, _ = w.Write(a)
 }
+
+//plainEchoResponder is a test stub for POST requests, which makes echo of a post body
+func (s *filterTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
+	var a []byte
+	_, _ = r.Body.Read(a)
+	_, _ = w.Write(a)
+}

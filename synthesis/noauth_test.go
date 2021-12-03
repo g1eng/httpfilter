@@ -20,3 +20,17 @@ func (s *filterTestSuite) TestFalse(c *C) {
 	False(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
+
+func (s *filterTestSuite) TestPlainNoAuth(c *C) {
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
+	PlainNoAuth(s.plainEchoResponder)(w, r)
+	c.Check(w.Code, Equals, http.StatusOK)
+}
+
+func (s *filterTestSuite) TestPlainFalse(c *C) {
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
+	PlainFalse(s.plainEchoResponder)(w, r)
+	c.Check(w.Code, Equals, http.StatusForbidden)
+}
