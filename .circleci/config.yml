@@ -21,7 +21,7 @@ jobs:
           name: Run tests
           command: |
             mkdir -p /tmp/test-reports
-            go test -race -coverprofile=coverage.txt -covermode=atomic ./filter/ ./ipfilter/ ./session/ ./wrapper/
+            go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       - run:
           name: uploade coverage to codecov
           command: |

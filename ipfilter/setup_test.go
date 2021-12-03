@@ -1,4 +1,4 @@
-package filter
+package ipfilter
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -12,15 +12,13 @@ func init() {
 }
 
 type filterTestSuite struct {
-	f     HttpFilter
-	dummy HttpFilter
+	f     *IPFilter
+	dummy *IPFilter
 }
 
 func Test(t *testing.T) { TestingT(t) }
 
 func (s *filterTestSuite) SetUpTest(_ *C) {
-	s.f = *NewFilter()
-	s.dummy = *NewFilter()
 }
 
 func noAuth(handle httprouter.Handle) httprouter.Handle {
@@ -33,6 +31,12 @@ func (s *filterTestSuite) nullHandler(_ http.ResponseWriter, _ *http.Request, _ 
 
 //echoResponder is a test stub for POST requests, which makes echo of a post body
 func (s *filterTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	var a []byte
+	_, _ = r.Body.Read(a)
+	_, _ = w.Write(a)
+}
+
+func (s *filterTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
 	var a []byte
 	_, _ = r.Body.Read(a)
 	_, _ = w.Write(a)
