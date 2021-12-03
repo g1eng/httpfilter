@@ -1,6 +1,6 @@
 ## `HttpFilter`
 
-A set of conditional access control wrappers for golang web application based on [httprouter](https://github.com/julienschmidt/httprouter).
+A set of conditional access control wrappers for golang web application based on [httprouter](https://github.com/julienschmidt/httprouter) and http.HandlerFunc.
 
 ### Status
 
