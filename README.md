@@ -137,7 +137,7 @@ func herHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func Route() *httprouter.Router {
 	router := httprouter.New()
 	defaultFilter := ipfilter.NewIPFilter(true, []string{"192.0.0.0/24"}).RouterAuthorize
-	managerFilter := basic.NewBasicAuth("/path/to/htpasswd/or/credential/line").Authenticate
+	managerFilter := basic.NewBasicAuth("/path/to/htpasswd/or/credential/line").RouterAuthenticate
 	
 	dualAuth := rt_synthesis.AuthAND(defaultFilter, managerFilter)
 	
