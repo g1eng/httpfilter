@@ -152,12 +152,12 @@ func Route() *httprouter.Router {
 On my nearest experience, different project in different requirements with different stakeholders, share similar access control mechanisms that satisfy any of VIP's request within possible costs.
 How do you think about such shared implementation can be reliable, full-featured, open and popular one?
 
-This project is a proposal for generic access control wrapper mechanism for golang-based web applications.
+This project is a proposal for generic access control wrapper mechanism on golang-based web applications.
 
 
 ## ToDo
 
-* ensure basic auth has valid behavior
+* ensure that basic auth has valid behavior
 * hardening on local session storage
 * redis token caching
 
