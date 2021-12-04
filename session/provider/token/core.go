@@ -1,4 +1,4 @@
-package local
+package token
 
 import (
 	"math/rand"
@@ -9,6 +9,7 @@ import (
 
 // calcSessionKey calculates unique key for a client from IP address and
 // user agent string from its request header.
+// FIXME: an user uses the same browser from the same IP, cannot access to same service
 func calcSessionKey(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0] + ":" + r.UserAgent()
 }

@@ -1,4 +1,4 @@
-package ipfilter
+package rt_synthesis
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -12,17 +12,11 @@ func init() {
 }
 
 type filterTestSuite struct {
-	f     *IPFilter
-	dummy *IPFilter
 }
 
 func Test(t *testing.T) { TestingT(t) }
 
 func (s *filterTestSuite) SetUpTest(_ *C) {
-}
-
-func noAuth(handle httprouter.Handle, _ ...string) httprouter.Handle {
-	return handle
 }
 
 func (s *filterTestSuite) nullHandler(_ http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -36,6 +30,7 @@ func (s *filterTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, 
 	_, _ = w.Write(a)
 }
 
+//plainEchoResponder is a test stub for POST requests, which makes echo of a post body
 func (s *filterTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
 	var a []byte
 	_, _ = r.Body.Read(a)

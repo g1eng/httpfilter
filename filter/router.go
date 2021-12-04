@@ -1,38 +1,38 @@
 package filter
 
 import (
-	"github.com/g1eng/httpfilter/synthesis"
+	"github.com/g1eng/httpfilter/synthesis/rt_synthesis"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
 type HttpHandlerHandler interface {
-	GET(string, synthesis.AuthWrapper, httprouter.Handle)
-	POST(string, synthesis.AuthWrapper, httprouter.Handle)
-	PUT(string, synthesis.AuthWrapper, httprouter.Handle)
-	DELETE(string, synthesis.AuthWrapper, httprouter.Handle)
-	PATCH(string, synthesis.AuthWrapper, httprouter.Handle)
+	GET(string, rt_synthesis.AuthWrapper, httprouter.Handle)
+	POST(string, rt_synthesis.AuthWrapper, httprouter.Handle)
+	PUT(string, rt_synthesis.AuthWrapper, httprouter.Handle)
+	DELETE(string, rt_synthesis.AuthWrapper, httprouter.Handle)
+	PATCH(string, rt_synthesis.AuthWrapper, httprouter.Handle)
 	OPTIONS(string, httprouter.Handle)
 	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
-func (f *HttpFilter) GET(resource string, authenticator synthesis.AuthWrapper, handler httprouter.Handle) {
+func (f *HttpFilter) GET(resource string, authenticator rt_synthesis.AuthWrapper, handler httprouter.Handle) {
 	f.RawRoute.GET(resource, f.appendCorsMethodHeader(resource, f.defaultAuth(authenticator(handler))))
 }
 
-func (f *HttpFilter) POST(resource string, authenticator synthesis.AuthWrapper, handler httprouter.Handle) {
+func (f *HttpFilter) POST(resource string, authenticator rt_synthesis.AuthWrapper, handler httprouter.Handle) {
 	f.RawRoute.POST(resource, f.appendCorsMethodHeader(resource, f.defaultAuth(authenticator(handler))))
 }
 
-func (f *HttpFilter) PUT(resource string, authenticator synthesis.AuthWrapper, handler httprouter.Handle) {
+func (f *HttpFilter) PUT(resource string, authenticator rt_synthesis.AuthWrapper, handler httprouter.Handle) {
 	f.RawRoute.PUT(resource, f.appendCorsMethodHeader(resource, f.defaultAuth(authenticator(handler))))
 }
 
-func (f *HttpFilter) DELETE(resource string, authenticator synthesis.AuthWrapper, handler httprouter.Handle) {
+func (f *HttpFilter) DELETE(resource string, authenticator rt_synthesis.AuthWrapper, handler httprouter.Handle) {
 	f.RawRoute.DELETE(resource, f.appendCorsMethodHeader(resource, f.defaultAuth(authenticator(handler))))
 }
 
-func (f *HttpFilter) PATCH(resource string, authenticator synthesis.AuthWrapper, handler httprouter.Handle) {
+func (f *HttpFilter) PATCH(resource string, authenticator rt_synthesis.AuthWrapper, handler httprouter.Handle) {
 	f.RawRoute.PATCH(resource, f.appendCorsMethodHeader(resource, f.defaultAuth(authenticator(handler))))
 }
 

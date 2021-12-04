@@ -1,4 +1,4 @@
-package synthesis
+package rt_synthesis
 
 import (
 	"bytes"
@@ -10,13 +10,13 @@ import (
 func (s *filterTestSuite) TestNoAuth(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	NoAuth(s.echoResponder)(w, r)
+	NoAuth(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestFalse(c *C) {
+func (s *filterTestSuite) TestForbid(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	Forbid(s.echoResponder)(w, r)
+	Forbid(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }

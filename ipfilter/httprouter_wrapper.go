@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-//IPHandler is one of the AuthWrapper which enables IP filtering
+//IPHandler is one of the RouterAuthWrapper which enables IP filtering
 //to allow/deny specific network address.
-func (ipf *IPFilter) IPHandler(handle httprouter.Handle) httprouter.Handle {
+func (ipf *IPFilter) IPHandler(handle httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		remoteIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 		if ipf.RawFilter.Allowed(remoteIP) {

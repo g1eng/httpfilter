@@ -1,4 +1,4 @@
-package synthesis
+package rt_synthesis
 
 import (
 	"bytes"
@@ -19,14 +19,14 @@ func (s *filterTestSuite) TestAndOKOK(c *C) {
 func (s *filterTestSuite) TestAndOKForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthAND(NoAuth, False)(s.echoResponder)(w, r, nil)
+	AuthAND(NoAuth, Forbid)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
 func (s *filterTestSuite) TestAndForbiddenOK(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthAND(False, NoAuth)(s.echoResponder)(w, r, nil)
+	AuthAND(Forbid, NoAuth)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
@@ -34,7 +34,7 @@ func (s *filterTestSuite) TestAndForbiddenOK(c *C) {
 func (s *filterTestSuite) TestAndForbiddenForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthAND(False, False)(s.echoResponder)(w, r, nil)
+	AuthAND(Forbid, Forbid)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
@@ -50,7 +50,7 @@ func (s *filterTestSuite) TestOrOKOK(c *C) {
 func (s *filterTestSuite) TestOrOKForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthOR(NoAuth, False)(s.echoResponder)(w, r, nil)
+	AuthOR(NoAuth, Forbid)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
@@ -58,7 +58,7 @@ func (s *filterTestSuite) TestOrOKForbidden(c *C) {
 func (s *filterTestSuite) TestOrForbiddenForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthOR(False, False)(s.echoResponder)(w, r, nil)
+	AuthOR(Forbid, Forbid)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
@@ -79,6 +79,6 @@ func (s *filterTestSuite) TestAuthAllOK5(c *C) {
 func (s *filterTestSuite) TestAuthAllOK4Not1(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	AuthAll(NoAuth, NoAuth, NoAuth, False, NoAuth)(s.echoResponder)(w, r, nil)
+	AuthAll(NoAuth, NoAuth, NoAuth, Forbid, NoAuth)(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }

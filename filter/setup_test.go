@@ -23,7 +23,7 @@ func (s *filterTestSuite) SetUpTest(_ *C) {
 	s.dummy = *NewFilter()
 }
 
-func noAuth(handle httprouter.Handle) httprouter.Handle {
+func noAuth(handle httprouter.Handle, _ ...string) httprouter.Handle {
 	return handle
 }
 

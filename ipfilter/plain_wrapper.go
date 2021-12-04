@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-//PlainIPHandler is one of the PlainAuthWrapper which enables IP filtering
+//PlainIPHandler is one of the AuthWrapper which enables IP filtering
 //to allow/deny specific network address.
-func (ipf *IPFilter) PlainIPHandler(handle http.HandlerFunc) http.HandlerFunc {
+func (ipf *IPFilter) PlainIPHandler(handle http.HandlerFunc, _ ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		remoteIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 		if ipf.RawFilter.Allowed(remoteIP) {

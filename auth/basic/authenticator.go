@@ -1,4 +1,4 @@
-package local
+package basic
 
 import (
 	"bufio"
@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -28,7 +29,7 @@ func SplitBasicCred(c string) (user string, password string, err error) {
 // ParseHTPasswd parses the contents of htpasswd. This will read all the
 // entries in the file, whether or not they are needed. An error is returned
 // if a syntax errors are encountered or if the reader fails.
-// Picked and modified from https://github.com/distribution/distribution/blob/v2.7.1/registry/auth/htpasswd/htpasswd.go
+// Cherry-picked and modified from https://github.com/distribution/distribution/blob/v2.7.1/registry/auth/htpasswd/htpasswd.go
 func ParseHTPasswd(rd io.Reader) (map[string]string, error) {
 	entries := map[string]string{}
 	scanner := bufio.NewScanner(rd)
@@ -61,42 +62,37 @@ func ParseHTPasswd(rd io.Reader) (map[string]string, error) {
 	return entries, nil
 }
 
-// Log provides internal logging mechanism for TokenStore
-func (sess BasicStore) Log(logLine string) (errorArray []error) {
-	if len(sess.Logger) == 0 {
+// Log provides internal logging mechanism for Authenticator
+func (b Authenticator) Log(logLine string) {
+	if len(b.Logger) == 0 {
 		log.Println(logLine)
-		return errorArray
+		return
 	}
-	for _, logger := range sess.Logger {
+	errorStr := ""
+	for _, logger := range b.Logger {
 		if _, err := logger.Write([]byte(logLine)); err != nil {
-			errorArray = append(errorArray, err)
+			errorStr = fmt.Sprintf("%v\n", err)
 		}
 	}
-	return errorArray
+	if errorStr != "" {
+		_, _ = fmt.Fprintf(os.Stderr, errorStr)
+	}
 }
 
-//For compatibility and no real action
-func (sess *BasicStore) RegisterClient(_ *http.Request) (string, error) {
-	return "", nil
+func (b *Authenticator) Authenticate(_ http.HandlerFunc, _ ...string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//stub
+	}
 }
 
-//For compatibility and no real action
-func (sess *BasicStore) RevokeClient(_ *http.Request) error {
-	return nil
-}
-
-//For compatibility and no real action
-func (sess *BasicStore) GetAccessToken() string {
-	return ""
-}
-
-//Auth handles authentication process via Basic authentication.
-//If any unauthorized access, it sends WWW-Authenticate header for the client.
-func (sess *BasicStore) Auth(handle httprouter.Handle) httprouter.Handle {
+//RouterAuthenticate handles authentication process via Basic authentication.
+//If any unauthorized access, it sends WWW-RouterAuthenticate header for the client
+//and terminate the session.
+func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		authHeader := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 		if len(authHeader) != 2 || strings.ToLower(authHeader[0]) != "basic" {
-			w.Header().Set("WWW-Authenticate", `Basic realm="basic authentication"`)
+			w.Header().Set("WWW-RouterAuthenticate", `Basic realm="basic authentication"`)
 			responder.Write400(w)
 			return
 		}
@@ -107,14 +103,12 @@ func (sess *BasicStore) Auth(handle httprouter.Handle) httprouter.Handle {
 		}
 
 		user, cryptPassword, err := SplitBasicCred(string(payload))
-
 		//Invalid authHeader
 		if err != nil {
 			responder.Write400(w)
 			return
 		}
-
-		for u, c := range sess.userCredentials {
+		for u, c := range b.userCredentials {
 			if u == user && c == cryptPassword {
 				handle(w, r, ps)
 				return

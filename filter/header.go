@@ -22,7 +22,7 @@ func (f *HttpFilter) setGenericHeader(w http.ResponseWriter) {
 
 // appendCorsMethodHeader is a simple setter for Access-Control-Allow-Methods header for any routes.
 // This method is a wrapper of httprouter.Handle.
-func (f *HttpFilter) appendCorsMethodHeader(resource string, handler httprouter.Handle) httprouter.Handle {
+func (f *HttpFilter) appendCorsMethodHeader(resource string, handler httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		f.setGenericHeader(w)
 		f.setHardeningHeader(w)
