@@ -5,11 +5,6 @@
 
 A set of conditional access control wrappers for golang-based web application, written in [httprouter](https://github.com/julienschmidt/httprouter) and http.HandlerFunc.
 
-```go
-type AuthWrapper func (http.HandlerFunc, _ ...string) http.HandlerFunc
-type RouterAuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
-```
-
 ## Features
 
 * variety of handler wrappers implemented in `AuthWrapper` helps you to protect resources for `http.HandlerFunc` and `httprouter.Handle`.
@@ -20,8 +15,16 @@ type RouterAuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
 
 ## What is `AuthWrapper`?
 
-RouterAuthWrapper is the function type which receives `http.HandlerFunc` as its argument, and returns `http.HandlerFunc`.
-If you feel `http.HandlerFunc` or `httprouter.Handle` friendly, maybe you should have been writing a number of wrappers for these handler functions. (also handler function itself).
+```go
+type AuthWrapper func (http.HandlerFunc, _ ...string) http.HandlerFunc
+type RouterAuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
+```
+
+AuthWrapper is the function type which receives `http.HandlerFunc` as its first argument, and returns `http.HandlerFunc`.
+Its counter part for httprouter, RouterAuthWrapper is the function type which receives `httprouter.Handle` as its first argument, and returns `http.HandlerFunc`.
+Both of them can receive additional string parameter for internal conditional evaluation.
+
+If you feel `http.HandlerFunc` or `httprouter.Handle` friendly, maybe you should have been writing a number of wrappers for these handler functions. (also handler function itself). AuthWrappers (synthesys.AuthWrapper or rt_synthesis.AuthWrapper) are designed to be used as function generator which are acceptable for `http.HandleFunc` or `httprouter.Handle` like this:
 
 ```go
 http.HandleFunc("/some/resource", someRouterAuthWrapper(yourHandler))
@@ -29,7 +32,8 @@ http.HandleFunc("/some/resource", someRouterAuthWrapper(yourHandler))
 router.GET("/api/path/somewhere", someRouterAuthWrapper(yourHandler))
 ```
 
-Many of wrapper functions in this package are implemented in `AuthWrapper` and `RouterAuthWrapper`, including basic authentication, IP filtering, header validation, and so on.
+Many of wrapper functions in this package are implemented in `AuthWrapper` type, including basic authentication, IP filtering, header validation, and so on.
+You can apply single basic authentication for a simple but a little secured route with following snippet: 
 
 ```go
 package example
@@ -104,7 +108,7 @@ func Serve() {
 
 ```
 
-For `RouterAuthWrapper`:
+For `RouterAuthWrapper`, import `synthesis/rt_synthesis` package and use Auth* declared there:
 
 ```go
 package example
@@ -149,6 +153,7 @@ This project is a proposal for generic access control wrapper mechanism for gola
 ## ToDo
 
 * ensure basic auth has valid behavior
+* hardening on local session storage
 * redis token caching
 
 ## DOCUMENTATION
