@@ -1,7 +1,10 @@
 package basic
 
 import (
+	"crypto/md5"
+	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -11,25 +14,32 @@ type Authenticator struct {
 	Logger          []io.Writer
 }
 
-func NewBasicAuth(cred string, w ...io.Writer) *Authenticator {
+//NewBasicAuth generates new filter instance for basic authentication.
+func NewBasicAuth(cred string, logger ...io.Writer) (*Authenticator, error) {
 	auth := &Authenticator{
-		Logger: w,
+		Logger: logger,
 	}
 	var c map[string]string
+
+	//try to open `cred` as a file
 	f, err := os.Open(cred)
 	if err != nil {
 		c, err = ParseHTPasswd(strings.NewReader(cred))
 		if err != nil {
 			auth.Log(err.Error())
-			os.Exit(1)
+			return nil, err
+		}
+		for k, v := range c {
+			c[k] = fmt.Sprintf("%x", md5.Sum([]byte(v)))
 		}
 		auth.userCredentials = c
 	} else {
+		log.Println("isfile")
 		c, err = ParseHTPasswd(f)
 		if err != nil {
 			auth.Log(err.Error())
-			os.Exit(1)
+			return nil, err
 		}
 	}
-	return auth
+	return auth, nil
 }

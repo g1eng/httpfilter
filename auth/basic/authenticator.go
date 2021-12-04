@@ -14,7 +14,8 @@ import (
 	"strings"
 )
 
-// SplitBasicCred splits input string with colon and validate the result length is 2.
+// SplitBasicCred splits input string with htpasswd format. Input string is
+// separated with colon and validated as slice which has length 2.
 // If the length of result of split is not 2, it returns error.
 func SplitBasicCred(c string) (user string, password string, err error) {
 	credential := strings.SplitN(c, ":", 2)
@@ -79,9 +80,47 @@ func (b Authenticator) Log(logLine string) {
 	}
 }
 
-func (b *Authenticator) Authenticate(_ http.HandlerFunc, _ ...string) http.HandlerFunc {
+func (b *Authenticator) getAuthPayload(w http.ResponseWriter, r *http.Request) (string, error) {
+	authHeader := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+	if len(authHeader) != 2 || strings.ToLower(authHeader[0]) != "basic" {
+		w.Header().Set("WWW-Authenticate", `Basic realm="basic authentication"`)
+		responder.Write400(w)
+		return "", fmt.Errorf("invalid header for basic auth %v %v", r.RemoteAddr, r.UserAgent())
+	}
+	payload, err := base64.StdEncoding.DecodeString(authHeader[1])
+	if err != nil {
+		log.Println(err)
+		responder.Write401(w)
+		return "", fmt.Errorf("credential not found for basic auth %v %v %v", r.RemoteAddr, r.UserAgent(), r.Header.Get("Authorization"))
+	}
+	return string(payload), nil
+}
+
+func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//stub
+		p, err := b.getAuthPayload(w, r)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		//FIXME: this method is not here
+		user, cryptPassword, err := SplitBasicCred(p)
+
+		//Invalid authHeader
+		if err != nil {
+			responder.Write400(w)
+			return
+		}
+		for u, c := range b.userCredentials {
+			if u == user && c == cryptPassword {
+				handler(w, r)
+				return
+			}
+		}
+
+		responder.Write401(w)
+		return
 	}
 }
 
@@ -90,19 +129,15 @@ func (b *Authenticator) Authenticate(_ http.HandlerFunc, _ ...string) http.Handl
 //and terminate the session.
 func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		authHeader := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
-		if len(authHeader) != 2 || strings.ToLower(authHeader[0]) != "basic" {
-			w.Header().Set("WWW-RouterAuthenticate", `Basic realm="basic authentication"`)
-			responder.Write400(w)
-			return
-		}
-		payload, err := base64.StdEncoding.DecodeString(authHeader[1])
+		p, err := b.getAuthPayload(w, r)
 		if err != nil {
-			responder.Write401(w)
+			log.Println(err)
 			return
 		}
 
-		user, cryptPassword, err := SplitBasicCred(string(payload))
+		//FIXME: this method is not here
+		user, cryptPassword, err := SplitBasicCred(p)
+
 		//Invalid authHeader
 		if err != nil {
 			responder.Write400(w)
