@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/g1eng/httpfilter/tree/master.svg?style=svg)](https://circleci.com/gh/g1eng/httpfilter/tree/master)
 [![codecov](https://codecov.io/gh/g1eng/httpfilter/branch/master/graph/badge.svg?token=EJZIHPRGNI)](https://codecov.io/gh/g1eng/httpfilter)
 
-A set of conditional access control wrappers for golang-based web application, written in [httprouter](https://github.com/julienschmidt/httprouter) and http.HandlerFunc.
+A set of conditional access control wrappers for golang-based web application, written in [httprouter](https://github.com/julienschmidt/httprouter) and `http.HandlerFunc`.
 
 ## Features
 
@@ -16,8 +16,11 @@ A set of conditional access control wrappers for golang-based web application, w
 ## What is `AuthWrapper`?
 
 ```go
+//in synthesis package
 type AuthWrapper func (http.HandlerFunc, _ ...string) http.HandlerFunc
-type RouterAuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
+
+//in synthesis/rt_synthesis package
+type AuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
 ```
 
 AuthWrapper is the function type which receives `http.HandlerFunc` as its first argument, and returns `http.HandlerFunc`.
@@ -32,8 +35,10 @@ http.HandleFunc("/some/resource", someRouterAuthWrapper(yourHandler))
 router.GET("/api/path/somewhere", someRouterAuthWrapper(yourHandler))
 ```
 
+## How to use `AuthWrappers`?
+
 Many of wrapper functions in this package are implemented in `AuthWrapper` type, including basic authentication, IP filtering, header validation, and so on.
-You can apply single basic authentication for a simple but a little secured route with following snippet: 
+You can apply single basic authentication for a simple but a little secured route with the following snippet: 
 
 ```go
 package example
