@@ -13,6 +13,3 @@ type filterTestSuite struct {
 }
 
 func Test(t *testing.T) { TestingT(t) }
-
-func (s *filterTestSuite) SetUpTest(_ *C) {
-}

@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func serve() {
+func Serve() {
 	s := http.Server{
 		Addr: "127.0.0.1:8080",
 	}
@@ -27,7 +27,7 @@ func serve() {
 	}
 }
 
-func serveRouter() {
+func ServeRouter() {
 	AND := rt_synthesis.AuthAND
 	OR := rt_synthesis.AuthOR
 	unAuth := rt_synthesis.UnAuth
@@ -49,8 +49,8 @@ func serveRouter() {
 
 func main() {
 	if len(os.Args) == 0 {
-		serve()
+		Serve()
 	} else if len(os.Args) != 0 && os.Args[0] == "--router" {
-		serveRouter()
+		ServeRouter()
 	}
 }
