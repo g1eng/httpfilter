@@ -1,4 +1,4 @@
-package basic
+package auth
 
 import (
 	. "gopkg.in/check.v1"

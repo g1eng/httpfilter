@@ -1,4 +1,4 @@
-package basic
+package session
 
 import (
 	. "gopkg.in/check.v1"

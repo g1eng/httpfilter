@@ -5,25 +5,17 @@ import (
 	"net/http"
 )
 
-func conchHandler(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusAccepted)
-}
-
-func conchRoute(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func conchRoute(w http.ResponseWriter, _ *http.Request, ps httprouter.Params) {
 	if ps.ByName("ok") != "" {
-		conchHandler(w, r)
+		w.WriteHeader(http.StatusAccepted)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
-func oHandler(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func oRoute(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func oRoute(w http.ResponseWriter, _ *http.Request, ps httprouter.Params) {
 	if ps.ByName("ok") != "" {
-		oHandler(w, r)
+		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 	}
