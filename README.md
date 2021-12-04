@@ -3,14 +3,14 @@
 [![CircleCI](https://circleci.com/gh/g1eng/httpfilter/tree/master.svg?style=svg)](https://circleci.com/gh/g1eng/httpfilter/tree/master)
 [![codecov](https://codecov.io/gh/g1eng/httpfilter/branch/master/graph/badge.svg?token=EJZIHPRGNI)](https://codecov.io/gh/g1eng/httpfilter)
 
-A set of conditional access control wrappers for golang-based web application, written in [httprouter](https://github.com/julienschmidt/httprouter) and `http.HandlerFunc`.
+A set of conditional access control wrappers for golang-based web application, written in [httprouter](https://github.com/julienschmidt/httprouter) or `http.HandlerFunc`.
 
 ## Features
 
 * variety of handler wrappers implemented in `AuthWrapper` helps you to protect resources for `http.HandlerFunc` and `httprouter.Handle`.
 * several authentication providers and session management mechanisms are available in `auth` and `session` package for both of `http` and `httprouter` package.
 * simple IP-based filtering using `jpillora/ipfilter`. (thanks @jpillora!)
-* **AND** or **OR** synthetic wrapper with `httpfilter/syntesis` package, which enables you to apply two or more `AuthWrapper` for single route. (`RouterAuthWrapper` is also supported).
+* **AND** or **OR** [synthetic wrapper](#function-synthesis-for-access-control) with `httpfilter/syntesis` package, which enables you to apply two or more `AuthWrapper` for single route. (`AuthWrapper` is also supported).
 * Additional header management and built-in CORS support with `header` package (now only supported for `httprouter`)
 
 ## What is `AuthWrapper`?
@@ -23,16 +23,17 @@ type AuthWrapper func (http.HandlerFunc, _ ...string) http.HandlerFunc
 type AuthWrapper func (httprouter.Handle, _ ...string) httprouter.Handle
 ```
 
-AuthWrapper is the function type which receives `http.HandlerFunc` as its first argument, and returns `http.HandlerFunc`.
-Its counter part for httprouter, RouterAuthWrapper is the function type which receives `httprouter.Handle` as its first argument, and returns `http.HandlerFunc`.
-Both of them can receive additional string parameter for internal conditional evaluation.
+AuthWrapper is the function type which receives `http.HandlerFunc` for its first argument, and returns `http.HandlerFunc`.
+Its counter part for httprouter, `AuthWrapper in rt_synthesis package` is the function type which receives `httprouter.Handle` for its first argument, and returns `http.HandlerFunc`.
+Both of them can receive additional string parameter for internal conditional evaluation, but they are not essential in every `AuthWrapper` implementation.
 
-If you feel `http.HandlerFunc` or `httprouter.Handle` friendly, maybe you should have been writing a number of wrappers for these handler functions. (also handler function itself). AuthWrappers (synthesys.AuthWrapper or rt_synthesis.AuthWrapper) are designed to be used as function generator which are acceptable for `http.HandleFunc` or `httprouter.Handle` like this:
+If you feel `http.HandlerFunc` or `httprouter.Handle` friendly, maybe you should have been writing a number of wrappers for these handler functions. (also handler function itself). 
+AuthWrappers (synthesys.AuthWrapper or rt_synthesis.AuthWrapper) are designed to be used as function generator which are acceptable for `http.HandleFunc` or `httprouter.Handle` like this:
 
 ```go
-http.HandleFunc("/some/resource", someRouterAuthWrapper(yourHandler))
+http.HandleFunc("/some/resource", someAuthWrapper(yourHandler))
 //or
-router.GET("/api/path/somewhere", someRouterAuthWrapper(yourHandler))
+router.GET("/api/path/somewhere", someAuthWrapper(yourHandler))
 ```
 
 ## How to use `AuthWrappers`?
@@ -113,7 +114,7 @@ func Serve() {
 
 ```
 
-For `RouterAuthWrapper`, import `synthesis/rt_synthesis` package and use Auth* declared there:
+For `httprouter`, import `synthesis/rt_synthesis` package and use `Auth*` declared in that package:
 
 ```go
 package example
