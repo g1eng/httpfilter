@@ -12,7 +12,7 @@ func (s *filterTestSuite) TestPlainAllowedIP(c *C) {
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(true, []string{"127.0.0.1"})
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	s.f.PlainIPHandler(s.plainEchoResponder)(w, r)
+	s.f.Authorize(s.plainEchoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
@@ -21,7 +21,7 @@ func (s *filterTestSuite) TestPlainDeniedIP(c *C) {
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(false, []string{"127.0.0.1"})
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	s.f.PlainIPHandler(s.plainEchoResponder)(w, r)
+	s.f.Authorize(s.plainEchoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
@@ -30,7 +30,7 @@ func (s *filterTestSuite) TestPlainAllowedSubnet(c *C) {
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(true, []string{"127.0.0.0/8"})
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	s.f.PlainIPHandler(s.plainEchoResponder)(w, r)
+	s.f.Authorize(s.plainEchoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
@@ -39,6 +39,6 @@ func (s *filterTestSuite) TestPlainDeniedSubnet(c *C) {
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(false, []string{"127.0.0.0/8"})
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
-	s.f.PlainIPHandler(s.plainEchoResponder)(w, r)
+	s.f.Authorize(s.plainEchoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
