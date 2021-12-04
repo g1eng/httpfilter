@@ -1,4 +1,4 @@
-package local
+package token
 
 import (
 	"errors"
@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-// Log provides internal logging mechanism for TokenStore
-func (sess TokenStore) Log(logLine string) (errorArray []error) {
+// Log provides internal logging mechanism for Store
+func (sess Store) Log(logLine string) (errorArray []error) {
 	if len(sess.Logger) == 0 {
 		log.Println(logLine)
 		return errorArray
@@ -24,8 +24,8 @@ func (sess TokenStore) Log(logLine string) (errorArray []error) {
 }
 
 // RegisterClient generates new secret and registers client and its secret
-// in TokenStore.
-func (sess TokenStore) RegisterClient(r *http.Request) (string, error) {
+// in Store.
+func (sess Store) RegisterClient(r *http.Request) (string, error) {
 	key := calcSessionKey(r)
 	if key == "" {
 		return "", errors.New("invalid client: pair of IP and User Agent not found")
@@ -40,7 +40,7 @@ func (sess TokenStore) RegisterClient(r *http.Request) (string, error) {
 
 // RevokeClient revokes registered client for the session.
 // This method removes registered credential for the client
-func (sess TokenStore) RevokeClient(r *http.Request) error {
+func (sess Store) RevokeClient(r *http.Request) error {
 	key := calcSessionKey(r)
 	if sess.userSessions[key] == "" {
 		return errors.New("client not registered")
@@ -50,13 +50,14 @@ func (sess TokenStore) RevokeClient(r *http.Request) error {
 	}
 }
 
-// Auth provides local authentication handler for httprouter.Handle handlers.
-// This method searches client information in TokenStore and matches header
+// Authorize provides local authorization handler for httprouter.Handle handlers.
+// This method searches client information in Store and matches header
 // value with the secret registered in userSessions.
+//
 // If the matched result is success, it provides protected route for the client.
 //
 //[Note] customHeader is used for the authentication.
-func (sess TokenStore) Auth(h httprouter.Handle) httprouter.Handle {
+func (sess Store) Authorize(h httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		key := calcSessionKey(r)
 		val := sess.userSessions[key]
@@ -76,12 +77,12 @@ func (sess TokenStore) Auth(h httprouter.Handle) httprouter.Handle {
 }
 
 // GetAccessToken returns preset access token.
-func (sess *TokenStore) GetAccessToken() string {
+func (sess *Store) GetAccessToken() string {
 	return sess.accessToken
 }
 
 // RegenerateToken recreates access token with CalcBs32 and returns it.
-func (sess *TokenStore) RegenerateToken() string {
+func (sess *Store) RegenerateToken() string {
 	sess.accessToken = CalcBs32()
 	return sess.accessToken
 }
