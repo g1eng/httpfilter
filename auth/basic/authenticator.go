@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/g1eng/httpfilter/session/responder"
 	"github.com/julienschmidt/httprouter"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"net/http"
@@ -31,8 +32,8 @@ func SplitBasicCred(c string) (user string, password string, err error) {
 // entries in the file, whether or not they are needed. An error is returned
 // if a syntax errors are encountered or if the reader fails.
 // Cherry-picked and modified from https://github.com/distribution/distribution/blob/v2.7.1/registry/auth/htpasswd/htpasswd.go
-func ParseHTPasswd(rd io.Reader) (map[string]string, error) {
-	entries := map[string]string{}
+func ParseHTPasswd(rd io.Reader) (map[string][]byte, error) {
+	entries := map[string][]byte{}
 	scanner := bufio.NewScanner(rd)
 	var line int
 	for scanner.Scan() {
@@ -53,7 +54,7 @@ func ParseHTPasswd(rd io.Reader) (map[string]string, error) {
 			return nil, fmt.Errorf("htpasswd: invalid entry at line %d: %q", line, scanner.Text())
 		}
 
-		entries[t[:i]] = t[i+1:]
+		entries[t[:i]] = []byte(t[i+1:])
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -83,6 +84,7 @@ func (b Authenticator) Log(logLine string) {
 func (b *Authenticator) getAuthPayload(w http.ResponseWriter, r *http.Request) (string, error) {
 	authHeader := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 	if len(authHeader) != 2 || strings.ToLower(authHeader[0]) != "basic" {
+		log.Println("invalid payload")
 		w.Header().Set("WWW-Authenticate", `Basic realm="basic authentication"`)
 		responder.Write400(w)
 		return "", fmt.Errorf("invalid header for basic auth %v %v", r.RemoteAddr, r.UserAgent())
@@ -104,16 +106,17 @@ func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http
 			return
 		}
 
-		//FIXME: this method is not here
-		user, cryptPassword, err := SplitBasicCred(p)
+		user, plainPass, err := SplitBasicCred(p)
 
 		//Invalid authHeader
 		if err != nil {
+			log.Println("invalid authorization header")
 			responder.Write400(w)
 			return
 		}
 		for u, c := range b.userCredentials {
-			if u == user && c == cryptPassword {
+			err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
+			if u == user && err != nil {
 				handler(w, r)
 				return
 			}
@@ -135,8 +138,7 @@ func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string
 			return
 		}
 
-		//FIXME: this method is not here
-		user, cryptPassword, err := SplitBasicCred(p)
+		user, plainPass, err := SplitBasicCred(p)
 
 		//Invalid authHeader
 		if err != nil {
@@ -144,11 +146,13 @@ func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string
 			return
 		}
 		for u, c := range b.userCredentials {
-			if u == user && c == cryptPassword {
+			err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
+			if u == user && err != nil {
 				handle(w, r, ps)
 				return
 			}
 		}
+
 		responder.Write401(w)
 		return
 	}

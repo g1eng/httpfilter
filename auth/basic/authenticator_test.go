@@ -73,3 +73,15 @@ func (s *filterTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
 	//a.RouterAuthenticate(s.routeOK)(w, r, nil)
 	//c.Check(w.Code, Equals, http.StatusOK)
 }
+
+func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
+	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.SetBasicAuth("sampleuser01", "mokomoko")
+	a.Authenticate(s.handleOK)(w, r)
+	c.Check(w.Code, Equals, http.StatusOK)
+
+}

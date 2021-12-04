@@ -1,8 +1,7 @@
 package basic
 
 import (
-	"crypto/md5"
-	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"os"
@@ -10,7 +9,7 @@ import (
 )
 
 type Authenticator struct {
-	userCredentials map[string]string
+	userCredentials map[string][]byte
 	Logger          []io.Writer
 }
 
@@ -19,7 +18,7 @@ func NewBasicAuth(cred string, logger ...io.Writer) (*Authenticator, error) {
 	auth := &Authenticator{
 		Logger: logger,
 	}
-	var c map[string]string
+	var c map[string][]byte
 
 	//try to open `cred` as a file
 	f, err := os.Open(cred)
@@ -30,7 +29,10 @@ func NewBasicAuth(cred string, logger ...io.Writer) (*Authenticator, error) {
 			return nil, err
 		}
 		for k, v := range c {
-			c[k] = fmt.Sprintf("%x", md5.Sum([]byte(v)))
+			c[k], err = bcrypt.GenerateFromPassword(v, 12)
+			if err != nil {
+				return nil, err
+			}
 		}
 		auth.userCredentials = c
 	} else {
