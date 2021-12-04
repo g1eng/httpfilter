@@ -1,4 +1,4 @@
-package filter
+package header
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -12,8 +12,8 @@ func init() {
 }
 
 type filterTestSuite struct {
-	f     HttpFilter
-	dummy HttpFilter
+	f     Filter
+	dummy Filter
 }
 
 func Test(t *testing.T) { TestingT(t) }

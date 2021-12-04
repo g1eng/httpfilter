@@ -1,4 +1,4 @@
-package filter
+package header
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -8,7 +8,7 @@ import (
 
 // setGenericHeader is setter of CORS header for http.ResponseWriter of each RawRoute.
 // This method is for common headers.
-func (f *HttpFilter) setGenericHeader(w http.ResponseWriter) {
+func (f *Filter) setGenericHeader(w http.ResponseWriter) {
 	if f.origin != "" {
 		w.Header().Set("Access-Control-Allow-Origin", f.origin)
 	}
@@ -22,7 +22,7 @@ func (f *HttpFilter) setGenericHeader(w http.ResponseWriter) {
 
 // appendCorsMethodHeader is a simple setter for Access-Control-Allow-Methods header for any routes.
 // This method is a wrapper of httprouter.Handle.
-func (f *HttpFilter) appendCorsMethodHeader(resource string, handler httprouter.Handle, _ ...string) httprouter.Handle {
+func (f *Filter) appendCorsMethodHeader(resource string, handler httprouter.Handle, _ ...string) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		f.setGenericHeader(w)
 		f.setHardeningHeader(w)
@@ -37,7 +37,7 @@ func (f *HttpFilter) appendCorsMethodHeader(resource string, handler httprouter.
 	}
 }
 
-func (f *HttpFilter) setHardeningHeader(w http.ResponseWriter) {
+func (f *Filter) setHardeningHeader(w http.ResponseWriter) {
 	w.Header().Set("X-Frame-Options", "DENY")
 	w.Header().Set("X-Content-Type-Options", "no-sniff")
 	w.Header().Set("X-XSS-Protection", "1; mode=block")

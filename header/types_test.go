@@ -1,4 +1,4 @@
-package filter
+package header
 
 import (
 	. "gopkg.in/check.v1"

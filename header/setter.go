@@ -1,16 +1,16 @@
-package filter
+package header
 
 // SetDebug permissively turn on debug flag
-func (f *HttpFilter) SetDebug() {
+func (f *Filter) SetDebug() {
 	f.debug = true
 }
 
 // SetOrigin sets origin hostname for CORS restriction
-func (f *HttpFilter) SetOrigin(origin string) {
+func (f *Filter) SetOrigin(origin string) {
 	f.origin = origin
 }
 
 // SetCustomHeader sets a custom header for the service endpoint
-func (f *HttpFilter) SetCustomHeader(key string) {
+func (f *Filter) SetCustomHeader(key string) {
 	f.customHeader = key
 }
