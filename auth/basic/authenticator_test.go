@@ -8,33 +8,33 @@ import (
 )
 
 //this should result error
-func (s *filterTestSuite) TestNewInvalidCredString(c *C) {
+func (s *authTestSuite) TestNewInvalidCredString(c *C) {
 	_, err := NewBasicAuth("ok")
 	c.Check(err, NotNil)
 }
 
 //this should result error
-func (s *filterTestSuite) TestNewNoHtpasswd(c *C) {
+func (s *authTestSuite) TestNewNoHtpasswd(c *C) {
 	_, err := NewBasicAuth("/home/not/there")
 	c.Check(err, NotNil)
 }
 
 //this should result error
-func (s *filterTestSuite) TestNewInvalidHtpasswd(c *C) {
+func (s *authTestSuite) TestNewInvalidHtpasswd(c *C) {
 	_, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/corrupt.htpasswd")
 	c.Check(err, NotNil)
 }
 
 //this should not result error
-func (s *filterTestSuite) TestNewValidStringCred(c *C) {
-	a, err := NewBasicAuth("koremo:$apr1$DrWuZAEw$pwnhPomgEICGtAy1qZWWY0")
+func (s *authTestSuite) TestNewValidStringCred(c *C) {
+	a, err := NewBasicAuth("koremo:$2y$12$lJD.tslxAuRtLdWamSuWcOZ4fcpwWX4VZIfj3Ph/Y9RYSKVP4NSMW")
 	c.Check(err, IsNil)
 	c.Check(a, NotNil)
 
 }
 
 //this should not result error
-func (s *filterTestSuite) TestNewValidHtpasswd(c *C) {
+func (s *authTestSuite) TestNewValidHtpasswd(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
 	count := 0
@@ -46,8 +46,8 @@ func (s *filterTestSuite) TestNewValidHtpasswd(c *C) {
 }
 
 //this should result 400 status
-func (s *filterTestSuite) TestBasicAuthCredStringBad(c *C) {
-	a, err := NewBasicAuth("koremo:$apr1$DrWuZAEw$pwnhPomgEICGtAy1qZWWY0")
+func (s *authTestSuite) TestBasicAuthCredStringBad(c *C) {
+	a, err := NewBasicAuth("koremo:$2y$12$lJD.tslxAuRtLdWamSuWcOZ4fcpwWX4VZIfj3Ph/Y9RYSKVP4NSMW")
 	c.Check(err, IsNil)
 
 	w := httptest.NewRecorder()
@@ -63,13 +63,13 @@ func (s *filterTestSuite) TestBasicAuthCredStringBad(c *C) {
 }
 
 //this should result 200 status
-func (s *filterTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
-	a, err := NewBasicAuth("koremo:$apr1$DrWuZAEw$pwnhPomgEICGtAy1qZWWY0")
+func (s *authTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
+	a, err := NewBasicAuth("sampleuser01:$2y$12$73tkaxuriZiMAQMoWek7FuaZcXszp95QkEyvlp8vafypceHvCd/U.")
 	c.Check(err, IsNil)
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/", nil)
-	r.SetBasicAuth("koremo", "ashinokokara8")
+	r.SetBasicAuth("sampleuser01", "mokomoko")
 	a.Authenticate(s.handleOK)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 
@@ -82,7 +82,7 @@ func (s *filterTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
 }
 
 //this should result 200 status
-func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
+func (s *authTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
 
@@ -95,7 +95,7 @@ func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
 }
 
 //this should result 401 status
-func (s *filterTestSuite) TestBasicAuthHtpasswdUnauthorized(c *C) {
+func (s *authTestSuite) TestBasicAuthHtpasswdUnauthorized(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
 
@@ -108,7 +108,7 @@ func (s *filterTestSuite) TestBasicAuthHtpasswdUnauthorized(c *C) {
 }
 
 //this should result 200 status
-func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
+func (s *authTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
 
@@ -121,7 +121,7 @@ func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
 }
 
 //this should result 200 status
-func (s *filterTestSuite) TestBasicAuthHtpasswdRouterAuthenticate(c *C) {
+func (s *authTestSuite) TestBasicAuthHtpasswdRouterAuthenticate(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
 

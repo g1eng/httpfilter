@@ -8,7 +8,7 @@ import (
 )
 
 //200
-func (s *filterTestSuite) TestAndOKOK(c *C) {
+func (s *synthesisTestSuite) TestAndOKOK(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAND(NoAuth, NoAuth)(s.echoResponder)(w, r)
@@ -16,14 +16,14 @@ func (s *filterTestSuite) TestAndOKOK(c *C) {
 }
 
 //403
-func (s *filterTestSuite) TestAndOKForbidden(c *C) {
+func (s *synthesisTestSuite) TestAndOKForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAND(NoAuth, Forbid)(s.echoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
-func (s *filterTestSuite) TestAndForbiddenOK(c *C) {
+func (s *synthesisTestSuite) TestAndForbiddenOK(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAND(Forbid, NoAuth)(s.echoResponder)(w, r)
@@ -31,7 +31,7 @@ func (s *filterTestSuite) TestAndForbiddenOK(c *C) {
 }
 
 //403
-func (s *filterTestSuite) TestAndForbiddenForbidden(c *C) {
+func (s *synthesisTestSuite) TestAndForbiddenForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAND(Forbid, Forbid)(s.echoResponder)(w, r)
@@ -39,7 +39,7 @@ func (s *filterTestSuite) TestAndForbiddenForbidden(c *C) {
 }
 
 //200
-func (s *filterTestSuite) TestOrOKOK(c *C) {
+func (s *synthesisTestSuite) TestOrOKOK(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthOR(NoAuth, NoAuth)(s.echoResponder)(w, r)
@@ -47,7 +47,7 @@ func (s *filterTestSuite) TestOrOKOK(c *C) {
 }
 
 //200
-func (s *filterTestSuite) TestOrOKForbidden(c *C) {
+func (s *synthesisTestSuite) TestOrOKForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthOR(NoAuth, Forbid)(s.echoResponder)(w, r)
@@ -55,28 +55,28 @@ func (s *filterTestSuite) TestOrOKForbidden(c *C) {
 }
 
 //403
-func (s *filterTestSuite) TestOrForbiddenForbidden(c *C) {
+func (s *synthesisTestSuite) TestOrForbiddenForbidden(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthOR(Forbid, Forbid)(s.echoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
-func (s *filterTestSuite) TestAuthAllOK3(c *C) {
+func (s *synthesisTestSuite) TestAuthAllOK3(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAll(NoAuth, NoAuth, NoAuth)(s.echoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestAuthAllOK5(c *C) {
+func (s *synthesisTestSuite) TestAuthAllOK5(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAll(NoAuth, NoAuth, NoAuth, NoAuth, NoAuth)(s.echoResponder)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestAuthAllOK4Forbidden1(c *C) {
+func (s *synthesisTestSuite) TestAuthAllOK4Forbidden1(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	AuthAll(NoAuth, NoAuth, NoAuth, Forbid, NoAuth)(s.echoResponder)(w, r)

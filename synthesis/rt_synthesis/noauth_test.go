@@ -7,14 +7,14 @@ import (
 	"net/http/httptest"
 )
 
-func (s *filterTestSuite) TestNoAuth(c *C) {
+func (s *rtSynthesisTestSuite) TestNoAuth(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	NoAuth(s.echoResponder)(w, r, nil)
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestForbid(c *C) {
+func (s *rtSynthesisTestSuite) TestForbid(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/ok", bytes.NewBufferString(""))
 	Forbid(s.echoResponder)(w, r, nil)

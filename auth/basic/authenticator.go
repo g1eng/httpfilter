@@ -120,9 +120,10 @@ func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http
 		for u, c := range b.userCredentials {
 			if u == user {
 				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
-				cost, _ := bcrypt.Cost(c)
-				log.Println("cost for ", u, cost)
-				if err != nil {
+				//cost, _ := bcrypt.Cost(c)
+				//log.Println("cost for ", u, cost)
+				log.Printf("user %s, err: %v", u, err)
+				if err == nil {
 					handler(w, r)
 					return
 				}
@@ -152,10 +153,13 @@ func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string
 			return
 		}
 		for u, c := range b.userCredentials {
-			err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
-			if u == user && err != nil {
-				handle(w, r, ps)
-				return
+			if u == user {
+				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
+				log.Printf("user %s, err: %v", u, err)
+				if err != nil {
+					handle(w, r, ps)
+					return
+				}
 			}
 		}
 

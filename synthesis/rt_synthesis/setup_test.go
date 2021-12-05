@@ -8,30 +8,30 @@ import (
 )
 
 func init() {
-	Suite(&filterTestSuite{})
+	Suite(&rtSynthesisTestSuite{})
 }
 
-type filterTestSuite struct {
+type rtSynthesisTestSuite struct {
 }
 
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *filterTestSuite) SetUpTest(_ *C) {
+func (s *rtSynthesisTestSuite) SetUpTest(_ *C) {
 }
 
-func (s *filterTestSuite) nullHandler(_ http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func (s *rtSynthesisTestSuite) nullHandler(_ http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	return
 }
 
 //echoResponder is a test stub for POST requests, which makes echo of a post body
-func (s *filterTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (s *rtSynthesisTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var a []byte
 	_, _ = r.Body.Read(a)
 	_, _ = w.Write(a)
 }
 
 //plainEchoResponder is a test stub for POST requests, which makes echo of a post body
-func (s *filterTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
+func (s *rtSynthesisTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
 	var a []byte
 	_, _ = r.Body.Read(a)
 	_, _ = w.Write(a)

@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 )
 
-func (s *filterTestSuite) TestAllowedIP(c *C) {
+func (s *ipFilterTestSuite) TestAllowedIP(c *C) {
 	w := httptest.NewRecorder()
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(true, []string{"127.0.0.1"})
@@ -16,7 +16,7 @@ func (s *filterTestSuite) TestAllowedIP(c *C) {
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestDeniedIP(c *C) {
+func (s *ipFilterTestSuite) TestDeniedIP(c *C) {
 	w := httptest.NewRecorder()
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(false, []string{"127.0.0.1"})
@@ -25,7 +25,7 @@ func (s *filterTestSuite) TestDeniedIP(c *C) {
 	c.Check(w.Code, Equals, http.StatusForbidden)
 }
 
-func (s *filterTestSuite) TestAllowedSubnet(c *C) {
+func (s *ipFilterTestSuite) TestAllowedSubnet(c *C) {
 	w := httptest.NewRecorder()
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(true, []string{"127.0.0.0/8"})
@@ -34,7 +34,7 @@ func (s *filterTestSuite) TestAllowedSubnet(c *C) {
 	c.Check(w.Code, Equals, http.StatusOK)
 }
 
-func (s *filterTestSuite) TestDeniedSubnet(c *C) {
+func (s *ipFilterTestSuite) TestDeniedSubnet(c *C) {
 	w := httptest.NewRecorder()
 	//allow from 127.0.0.1
 	s.f = NewIPFilter(false, []string{"127.0.0.0/8"})

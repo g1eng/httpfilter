@@ -6,10 +6,10 @@ import (
 )
 
 func init() {
-	Suite(&filterTestSuite{})
+	Suite(&sampleTestSuite{})
 }
 
-type filterTestSuite struct {
+type sampleTestSuite struct {
 }
 
 func Test(t *testing.T) { TestingT(t) }

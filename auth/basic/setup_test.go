@@ -8,23 +8,23 @@ import (
 )
 
 func init() {
-	Suite(&filterTestSuite{})
+	Suite(&authTestSuite{})
 }
 
-type filterTestSuite struct {
+type authTestSuite struct {
 	auth *Authenticator
 }
 
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *filterTestSuite) SetUpTest(_ *C) {
+func (s *authTestSuite) SetUpTest(_ *C) {
 	//s.auth = NewBasicAuth("koremo:$apr1$7OpaItYk$P0pMHjZFCCmboF3RfrzZv.")
 }
 
-func (s *filterTestSuite) routeOK(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func (s *authTestSuite) routeOK(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (s *filterTestSuite) handleOK(w http.ResponseWriter, _ *http.Request) {
+func (s *authTestSuite) handleOK(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
