@@ -124,6 +124,7 @@ func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http
 				//log.Println("cost for ", u, cost)
 				log.Printf("user %s, err: %v", u, err)
 				if err == nil {
+					log.Println("authenticated")
 					handler(w, r)
 					return
 				}
@@ -156,7 +157,7 @@ func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string
 			if u == user {
 				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
 				log.Printf("user %s, err: %v", u, err)
-				if err != nil {
+				if err == nil {
 					handle(w, r, ps)
 					return
 				}

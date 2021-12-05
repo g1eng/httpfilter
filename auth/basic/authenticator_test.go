@@ -47,7 +47,7 @@ func (s *authTestSuite) TestNewValidHtpasswd(c *C) {
 
 //this should result 400 status
 func (s *authTestSuite) TestBasicAuthCredStringBad(c *C) {
-	a, err := NewBasicAuth("koremo:$2y$12$lJD.tslxAuRtLdWamSuWcOZ4fcpwWX4VZIfj3Ph/Y9RYSKVP4NSMW")
+	a, err := NewBasicAuth("koremo:notvalid")
 	c.Check(err, IsNil)
 
 	w := httptest.NewRecorder()
@@ -64,7 +64,7 @@ func (s *authTestSuite) TestBasicAuthCredStringBad(c *C) {
 
 //this should result 200 status
 func (s *authTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
-	a, err := NewBasicAuth("sampleuser01:$2y$12$73tkaxuriZiMAQMoWek7FuaZcXszp95QkEyvlp8vafypceHvCd/U.")
+	a, err := NewBasicAuth("sampleuser01:mokomoko")
 	c.Check(err, IsNil)
 
 	w := httptest.NewRecorder()
