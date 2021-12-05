@@ -119,3 +119,16 @@ func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
 	c.Check(w.Code, Equals, http.StatusOK)
 
 }
+
+//this should result 200 status
+func (s *filterTestSuite) TestBasicAuthHtpasswdRouterAuthenticate(c *C) {
+	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.SetBasicAuth("sampleuser01", "mokomoko")
+	a.RouterAuthenticate(s.routeOK)(w, r, nil)
+	c.Check(w.Code, Equals, http.StatusOK)
+
+}
