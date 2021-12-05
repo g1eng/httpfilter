@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
@@ -19,7 +20,7 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		} else {
-			log.Println(string(cryptPassword))
+			fmt.Println(os.Args[0] + ":" + string(cryptPassword))
 		}
 	}
 }
