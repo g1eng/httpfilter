@@ -38,6 +38,7 @@ func ParseHTPasswd(rd io.Reader) (map[string][]byte, error) {
 	var line int
 	for scanner.Scan() {
 		line++ // 1-based line numbering
+		log.Println("line: ", line)
 		t := strings.TrimSpace(scanner.Text())
 
 		if len(t) < 1 {
@@ -61,6 +62,7 @@ func ParseHTPasswd(rd io.Reader) (map[string][]byte, error) {
 		return nil, err
 	}
 
+	log.Println("entries: ", entries)
 	return entries, nil
 }
 
@@ -114,14 +116,18 @@ func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http
 			responder.Write400(w)
 			return
 		}
+		log.Println("plain password: ", plainPass)
 		for u, c := range b.userCredentials {
-			err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
-			if u == user && err != nil {
-				handler(w, r)
-				return
+			if u == user {
+				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
+				cost, _ := bcrypt.Cost(c)
+				log.Println("cost for ", u, cost)
+				if err != nil {
+					handler(w, r)
+					return
+				}
 			}
 		}
-
 		responder.Write401(w)
 		return
 	}

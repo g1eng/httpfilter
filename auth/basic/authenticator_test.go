@@ -37,10 +37,16 @@ func (s *filterTestSuite) TestNewValidStringCred(c *C) {
 func (s *filterTestSuite) TestNewValidHtpasswd(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
+	count := 0
+	for range a.userCredentials {
+		count++
+	}
+	c.Check(count, Equals, 2)
 	c.Check(a, NotNil)
 }
 
-func (s *filterTestSuite) TestBasicAuthCredStringForbidden(c *C) {
+//this should result 400 status
+func (s *filterTestSuite) TestBasicAuthCredStringBad(c *C) {
 	a, err := NewBasicAuth("koremo:$apr1$DrWuZAEw$pwnhPomgEICGtAy1qZWWY0")
 	c.Check(err, IsNil)
 
@@ -56,6 +62,7 @@ func (s *filterTestSuite) TestBasicAuthCredStringForbidden(c *C) {
 	//c.Check(w.Code, Equals, http.StatusUnauthorized)
 }
 
+//this should result 200 status
 func (s *filterTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
 	a, err := NewBasicAuth("koremo:$apr1$DrWuZAEw$pwnhPomgEICGtAy1qZWWY0")
 	c.Check(err, IsNil)
@@ -74,6 +81,7 @@ func (s *filterTestSuite) TestBasicAuthCredStringAuthenticate(c *C) {
 	//c.Check(w.Code, Equals, http.StatusOK)
 }
 
+//this should result 200 status
 func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
 	c.Check(err, IsNil)
@@ -81,6 +89,32 @@ func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate(c *C) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/", nil)
 	r.SetBasicAuth("sampleuser01", "mokomoko")
+	a.Authenticate(s.handleOK)(w, r)
+	c.Check(w.Code, Equals, http.StatusOK)
+
+}
+
+//this should result 401 status
+func (s *filterTestSuite) TestBasicAuthHtpasswdUnauthorized(c *C) {
+	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.SetBasicAuth("sampleuser01", "mokomoko2")
+	a.Authenticate(s.handleOK)(w, r)
+	c.Check(w.Code, Equals, http.StatusUnauthorized)
+
+}
+
+//this should result 200 status
+func (s *filterTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
+	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.SetBasicAuth("sampleuser02", "mokomoko2")
 	a.Authenticate(s.handleOK)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
 
