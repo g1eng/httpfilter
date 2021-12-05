@@ -107,6 +107,34 @@ func (s *authTestSuite) TestBasicAuthHtpasswdUnauthorized(c *C) {
 
 }
 
+//this should result 400 status
+func (s *authTestSuite) TestBasicAuthStringBadHeader(c *C) {
+
+	a, err := NewBasicAuth("sampleuser01:mokomoko")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.Header.Set("Authorization", "Basic BUT-header-is-not-base64-encoded")
+	a.Authenticate(s.handleOK)(w, r)
+	c.Check(w.Code, Equals, http.StatusBadRequest)
+
+}
+
+//this should result 400 status
+func (s *authTestSuite) TestBasicAuthStringBadPayload(c *C) {
+
+	a, err := NewBasicAuth("sampleuser01:mokomoko")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.Header.Set("Authorization", "Basic YnV0LWRhdGEtaXMtbm90LWhhdmUtaHRwYXNzd2QtZm9ybWF0Cg==")
+	a.Authenticate(s.handleOK)(w, r)
+	c.Check(w.Code, Equals, http.StatusBadRequest)
+
+}
+
 //this should result 200 status
 func (s *authTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
 	a, err := NewBasicAuth(os.Getenv("PWD") + "/../../fixtures/htpasswd")
@@ -117,6 +145,39 @@ func (s *authTestSuite) TestBasicAuthHtpasswdAuthenticate2(c *C) {
 	r.SetBasicAuth("sampleuser02", "mokomoko2")
 	a.Authenticate(s.handleOK)(w, r)
 	c.Check(w.Code, Equals, http.StatusOK)
+
+}
+
+//this should result 200 status
+func (s *authTestSuite) TestBasicAuthCredStringRouterAuthenticate(c *C) {
+	a, err := NewBasicAuth("sampleuser01:mokomoko")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.SetBasicAuth("sampleuser01", "mokomoko")
+	a.RouterAuthenticate(s.routeOK)(w, r, nil)
+	c.Check(w.Code, Equals, http.StatusOK)
+
+	////for httprouter
+	//w = httptest.NewRecorder()
+	//r = httptest.NewRequest("GET","/",nil)
+	//r.SetBasicAuth("koremo","ashinokokara8")
+	//a.RouterAuthenticate(s.routeOK)(w, r, nil)
+	//c.Check(w.Code, Equals, http.StatusOK)
+}
+
+//this should result 400 status
+func (s *authTestSuite) TestBasicAuthRouterStringBadPayload(c *C) {
+
+	a, err := NewBasicAuth("sampleuser01:mokomoko")
+	c.Check(err, IsNil)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	r.Header.Set("Authorization", "Basic YnV0LWRhdGEtaXMtbm90LWhhdmUtaHRwYXNzd2QtZm9ybWF0Cg==")
+	a.RouterAuthenticate(s.routeOK)(w, r, nil)
+	c.Check(w.Code, Equals, http.StatusBadRequest)
 
 }
 

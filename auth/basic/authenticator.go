@@ -94,7 +94,7 @@ func (b *Authenticator) getAuthPayload(w http.ResponseWriter, r *http.Request) (
 	payload, err := base64.StdEncoding.DecodeString(authHeader[1])
 	if err != nil {
 		log.Println(err)
-		responder.Write401(w)
+		responder.Write400(w)
 		return "", fmt.Errorf("credential not found for basic auth %v %v %v", r.RemoteAddr, r.UserAgent(), r.Header.Get("Authorization"))
 	}
 	return string(payload), nil
