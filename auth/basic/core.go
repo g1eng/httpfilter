@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/g1eng/httpfilter/session/responder"
-	"github.com/julienschmidt/httprouter"
-	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"net/http"
@@ -98,73 +96,4 @@ func (b *Authenticator) getAuthPayload(w http.ResponseWriter, r *http.Request) (
 		return "", fmt.Errorf("credential not found for basic auth %v %v %v", r.RemoteAddr, r.UserAgent(), r.Header.Get("Authorization"))
 	}
 	return string(payload), nil
-}
-
-func (b *Authenticator) Authenticate(handler http.HandlerFunc, _ ...string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		p, err := b.getAuthPayload(w, r)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		user, plainPass, err := SplitBasicCred(p)
-
-		//Invalid authHeader
-		if err != nil {
-			log.Println("invalid authorization header")
-			responder.Write400(w)
-			return
-		}
-		log.Println("plain password: ", plainPass)
-		for u, c := range b.userCredentials {
-			if u == user {
-				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
-				//cost, _ := bcrypt.Cost(c)
-				//log.Println("cost for ", u, cost)
-				log.Printf("user %s, err: %v", u, err)
-				if err == nil {
-					log.Println("authenticated")
-					handler(w, r)
-					return
-				}
-			}
-		}
-		responder.Write401(w)
-		return
-	}
-}
-
-//RouterAuthenticate handles authentication process via Basic authentication.
-//If any unauthorized access, it sends WWW-RouterAuthenticate header for the client
-//and terminate the session.
-func (b *Authenticator) RouterAuthenticate(handle httprouter.Handle, _ ...string) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		p, err := b.getAuthPayload(w, r)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		user, plainPass, err := SplitBasicCred(p)
-
-		//Invalid authHeader
-		if err != nil {
-			responder.Write400(w)
-			return
-		}
-		for u, c := range b.userCredentials {
-			if u == user {
-				err = bcrypt.CompareHashAndPassword(c, []byte(plainPass))
-				log.Printf("user %s, err: %v", u, err)
-				if err == nil {
-					handle(w, r, ps)
-					return
-				}
-			}
-		}
-
-		responder.Write401(w)
-		return
-	}
 }
