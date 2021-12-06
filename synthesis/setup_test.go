@@ -1,37 +1,25 @@
 package synthesis
 
 import (
-	"github.com/julienschmidt/httprouter"
 	. "gopkg.in/check.v1"
 	"net/http"
 	"testing"
 )
 
 func init() {
-	Suite(&filterTestSuite{})
+	Suite(&synthesisTestSuite{})
 }
 
-type filterTestSuite struct {
+type synthesisTestSuite struct {
 }
 
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *filterTestSuite) SetUpTest(_ *C) {
-}
-
-func (s *filterTestSuite) nullHandler(_ http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	return
-}
-
-//echoResponder is a test stub for POST requests, which makes echo of a post body
-func (s *filterTestSuite) echoResponder(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var a []byte
-	_, _ = r.Body.Read(a)
-	_, _ = w.Write(a)
+func (s *synthesisTestSuite) SetUpTest(_ *C) {
 }
 
 //plainEchoResponder is a test stub for POST requests, which makes echo of a post body
-func (s *filterTestSuite) plainEchoResponder(w http.ResponseWriter, r *http.Request) {
+func (s *synthesisTestSuite) echoResponder(w http.ResponseWriter, r *http.Request) {
 	var a []byte
 	_, _ = r.Body.Read(a)
 	_, _ = w.Write(a)

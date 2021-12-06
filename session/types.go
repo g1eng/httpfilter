@@ -7,7 +7,7 @@ import (
 
 //Provider represents authentication provider.
 type Provider interface {
-	Auth(handle httprouter.Handle) httprouter.Handle
+	Authorize(handle httprouter.Handle, _ ...string) httprouter.Handle
 	RegisterClient(r *http.Request) (string, error)
 	RevokeClient(r *http.Request) error
 	GetAccessToken() string     //GetAccessToken returns temporary access token for protected resources
