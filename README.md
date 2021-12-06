@@ -9,7 +9,7 @@ A set of conditional access control wrappers for golang-based web application, w
 
 * variety of handler wrappers implemented in `AuthWrapper` helps you to protect resources for `http.HandlerFunc` and `httprouter.Handle`.
 * several authentication providers and session management mechanisms are available in `auth` and `session` package for both of `http` and `httprouter` package.
-* simple IP-based filtering using `jpillora/ipfilter`. (thanks @jpillora!)
+* simple IP-based filtering powered by `jpillora/ipfilter`. (thanks!)
 * **AND** or **OR** [synthetic wrapper](#function-synthesis-for-access-control) with `httpfilter/syntesis` package, which enables you to apply two or more `AuthWrapper` for single route. (`AuthWrapper` is also supported).
 * Additional header management and built-in CORS support with `header` package (now only supported for `httprouter`)
 
@@ -155,11 +155,9 @@ How do you think about such shared implementation can be reliable, full-featured
 
 This project is a proposal for generic access control wrapper mechanism on golang-based web applications.
 
-
 ## ToDo
 
-* ensure that basic auth has valid behavior
-* hardening on local session storage
+* hardening on local session storage (and planning to import external popular session management mechanisms)
 * redis token caching
 
 ## DOCUMENTATION
